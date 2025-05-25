@@ -51,5 +51,5 @@ jobs:
         run: |
           dotnet tool install -g dotnet-stryker
           export PATH="$PATH:/home/runner/.dotnet/tools"
-          cd Bank/Bank.Domain.Tests
-          dotnet-stryker --project Bank.Domain.Tests.csproj
+          dotnet-stryker --project Bank/Bank.Domain.Tests/Bank.Domain.Tests.csproj
+
