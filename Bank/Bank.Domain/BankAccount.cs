@@ -46,13 +46,18 @@ public class BankAccount
     /// Debita una cantidad especificada del saldo de la cuenta.
     /// </summary>
     /// <param name="amount">Monto a debitar.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Si el monto es menor que cero o mayor que el saldo actual.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Si el monto es menor que cero, mayor que el saldo actual, o inválido (NaN o infinito).</exception>
     public void Debit(double amount)
     {
+        if (double.IsNaN(amount) || double.IsInfinity(amount))
+            throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be a valid number.");
+
         if (amount > m_balance)
             throw new ArgumentOutOfRangeException(nameof(amount), amount, DebitAmountExceedsBalanceMessage);
+
         if (amount < 0)
             throw new ArgumentOutOfRangeException(nameof(amount), amount, DebitAmountLessThanZeroMessage);
+
         m_balance -= amount;
     }
 
@@ -60,11 +65,15 @@ public class BankAccount
     /// Abona una cantidad especificada al saldo de la cuenta.
     /// </summary>
     /// <param name="amount">Monto a abonar.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Si el monto es menor que cero.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Si el monto es menor que cero o inválido (NaN o infinito).</exception>
     public void Credit(double amount)
     {
+        if (double.IsNaN(amount) || double.IsInfinity(amount))
+            throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be a valid number.");
+
         if (amount < 0)
             throw new ArgumentOutOfRangeException(nameof(amount));
+
         m_balance += amount;
     }
 }
