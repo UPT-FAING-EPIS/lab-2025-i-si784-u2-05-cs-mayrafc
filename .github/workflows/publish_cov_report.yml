@@ -21,7 +21,7 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore Bank/Bank.sln
 
-      - name: Build project
+      - name: Build solution
         run: dotnet build Bank/Bank.sln --no-restore --configuration Release
 
       - name: Run tests with coverage
@@ -47,11 +47,15 @@ jobs:
           publish_dir: Bank/Bank.Domain.Tests/TestResults/CoverageReport
           force_orphan: true
 
-      - name: Install Stryker.NET tool
+      - name: Build test project for mutation testing
+        working-directory: Bank/Bank.Domain.Tests
+        run: dotnet build --configuration Release
+
+      - name: Install Stryker.NET tool globally
         run: |
           dotnet tool install -g dotnet-stryker
           echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Run Stryker mutation testing
         working-directory: Bank/Bank.Domain.Tests
-        run: dotnet-stryker --project Bank.Domain.Tests.csproj
+        run: dotnet-stryker
