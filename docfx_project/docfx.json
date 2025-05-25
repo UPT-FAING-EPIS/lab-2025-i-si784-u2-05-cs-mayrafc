@@ -23,6 +23,7 @@
     "dest": "_site",
     "globalMetadata": {
       "_appTitle": "Bank API Documentation"
-    }
+    },
+    "maxParallelism": 1
   }
 }

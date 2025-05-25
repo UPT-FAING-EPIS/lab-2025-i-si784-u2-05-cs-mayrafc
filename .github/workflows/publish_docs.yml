@@ -22,18 +22,14 @@ jobs:
         run: dotnet tool install -g docfx
 
       - name: Clean _site folder before build
-        run: rm -rf docfx_project/_site/* || true
+        run: rm -rf docfx_project/_site
 
       - name: Wait for cleanup to complete
-        run: sleep 2
+        run: sleep 5
 
-      - name: Generate Metadata
+      - name: Build Documentation
         working-directory: docfx_project
-        run: docfx metadata
-
-      - name: Build Documentation site
-        working-directory: docfx_project
-        run: docfx build --disableParallel
+        run: docfx build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
