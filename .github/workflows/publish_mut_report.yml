@@ -31,7 +31,8 @@ jobs:
         run: dotnet tool install -g dotnet-stryker
 
       - name: Run mutation testing (Stryker.NET)
-        run: dotnet stryker --output ./Bank/Bank.Domain.Tests/TestResults/MutationReport --reporter "html"
+        working-directory: Bank/Bank.Domain.Tests
+        run: dotnet stryker --output TestResults/MutationReport --reporter "html"
 
       - name: Publish mutation report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
