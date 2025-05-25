@@ -15,8 +15,8 @@ jobs:
 
     env:
       PACKAGE_OUTPUT_DIRECTORY: ./nupkg
-      VERSION: 20220001  # Código de matrícula como versión
-
+      VERSION: 1.0.0-20220001 
+      
     steps:
       - name: Checkout del código
         uses: actions/checkout@v3
@@ -39,7 +39,7 @@ jobs:
       - name: Configurar NuGet para GitHub Packages
         run: |
           dotnet nuget remove source github || echo "No existe aún"
-          dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+          dotnet nuget add source "https://nuget.pkg.github.com/mayrafc/index.json" \
             --name github \
             --username ${{ github.actor }} \
             --password ${{ secrets.TOKENNUEVO }} \
