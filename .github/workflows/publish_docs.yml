@@ -25,6 +25,9 @@ jobs:
         working-directory: docfx_project
         run: docfx metadata
 
+      - name: Clean _site folder
+        run: rm -rf docfx_project/_site
+
       - name: Build Documentation
         working-directory: docfx_project
         run: docfx build
