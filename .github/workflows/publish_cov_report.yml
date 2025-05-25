@@ -40,15 +40,15 @@ jobs:
             -targetdir:"Bank/Bank.Domain.Tests/TestResults/CoverageReport" \
             -reporttypes:Html
 
-      - name: Install Stryker.NET and run mutation tests
-        run: |
-          dotnet tool install -g dotnet-stryker
-          export PATH="$PATH:/home/runner/.dotnet/tools"
-          stryker --project Bank/Bank.Domain.Tests/Bank.Domain.Tests.csproj
-
       - name: Publish coverage report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: Bank/Bank.Domain.Tests/TestResults/CoverageReport
           force_orphan: true
+
+      - name: Install Stryker.NET and run mutation tests
+        run: |
+          dotnet tool install -g dotnet-stryker
+          export PATH="$PATH:/home/runner/.dotnet/tools"
+          dotnet-stryker --project Bank/Bank.Domain.Tests/Bank.Domain.Tests.csproj
