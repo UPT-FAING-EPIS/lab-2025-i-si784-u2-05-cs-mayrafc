@@ -1,0 +1,62 @@
+name: Release NuGet Package
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    env:
+      PACKAGE_OUTPUT_DIRECTORY: ./nupkg
+      VERSION: 20220001  # Código de matrícula como versión
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Configurar .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restaurar dependencias
+        run: dotnet restore Bank/Bank.Domain/Bank.Domain.csproj
+
+      - name: Empaquetar NuGet con código de matrícula como versión
+        run: |
+          dotnet pack Bank/Bank.Domain/Bank.Domain.csproj \
+            --configuration Release \
+            -p:PackageVersion=${{ env.VERSION }} \
+            -o ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
+      - name: Configurar NuGet para GitHub Packages
+        run: |
+          dotnet nuget remove source github || echo "No existe aún"
+          dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            --name github \
+            --username ${{ github.actor }} \
+            --password ${{ secrets.TOKENNUEVO }} \
+            --store-password-in-clear-text
+
+      - name: Subir paquete a GitHub Packages
+        run: |
+          dotnet nuget push "${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg" \
+            --api-key ${{ secrets.TOKENNUEVO }} \
+            --source github \
+            --skip-duplicate
+
+      - name: Crear Release en GitHub
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: Release ${{ env.VERSION }}
+          files: ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
