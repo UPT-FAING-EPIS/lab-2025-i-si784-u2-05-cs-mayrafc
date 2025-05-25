@@ -1,0 +1,41 @@
+name: Publish Mutation Report
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-test-mutation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore Bank/Bank.sln
+
+      - name: Build project
+        run: dotnet build Bank/Bank.sln --no-restore --configuration Release
+
+      - name: Run tests
+        run: dotnet test Bank/Bank.Domain.Tests/Bank.Domain.Tests.csproj --no-build --configuration Release
+
+      - name: Install Striker tool globally
+        run: dotnet tool install -g Striker
+
+      - name: Run mutation testing (Striker)
+        run: |
+          striker --solution Bank/Bank.sln --output Bank/Bank.Domain.Tests/TestResults/MutationReport --reporter html
+
+      - name: Publish mutation report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: Bank/Bank.Domain.Tests/TestResults/MutationReport
